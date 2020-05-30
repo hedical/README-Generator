@@ -1,6 +1,10 @@
-var inquirer = require("inquirer");
+const inquirer = require(`inquirer`);
 
-var fs = require("fs");
+const axios = require("axios")
+
+const fs = require("fs");
+
+const repos = []
 
 inquirer.prompt([
     {
@@ -29,53 +33,91 @@ inquirer.prompt([
         name: "licenceConfirm"
     },
     {
-        type: "confirm",
-        message: "Would you like to add credits?",
-        name: "creditsConfirm"
+        type: "input",
+        message: "Please add the licence",
+        name: "licenceInput",
+        when: (answers) => answers.licenceConfirm === true,
     },
     {
         type: "confirm",
         message: "Would you like to add credits?",
         name: "creditsConfirm"
+    },
+    {
+        type: "input",
+        message: "Please add the credits",
+        name: "creditsInput",
+        when: (answers) => answers.creditsConfirm === true,
     },
     {
         type: "input",
         message: "Can you had your Github username?",
         name: "username"
     },
-    {
-        type: "input",
-        message: "repo url?",
-        name: "repo"
-    },
 ])
     .then((response) => {
+        if (!response.creditsInput) {
+            response.creditsInput = "Not credits"
+        }
+        if (!response.licenceInput) {
+            response.licenceInput = "No licence"
+        }
         console.log(response.title);
         console.log(response.description);
         console.log(response.usage);
         console.log(response.licenceConfirm);
+        console.log(response.licenceInput);
         console.log(response.creditsConfirm);
+        console.log(response.creditsInput);
         console.log(response.username);
-        fs.writeFile(`README.md`, `
-        
-        # ${response.title} \n
-        # Description \n
-        ${response.description} \n
-        # Table of content
-        - Installation \n
-        - Usage \n
-        - Licence \n
-        - Contributing \n
+        fs.writeFile(`README.md`, `# ${response.title}
+${response.description}
+# Table of content
+- Installation
+- Usage
+- Licence
+- Contributing
+- Questions
 
-        # Installation \n
-        ${response.installation}
+# Installation
+${response.installation}
+
+# Usage
+${response.usage}
+# Licence
+${response.licenceInput}
+# Credits
+${response.creditsInput}
         `
             , (error) => {
                 if (error) {
                     console.log(error);
                 }
-                console.log("title added");
+                console.log("Your readme has been created");
             })
+        axios.get(`https://api.github.com/users/${response.username}`)
+            .then(resp => {
+                console.log(resp.data.name)
+                console.log(resp.data.avatar_url)
+                console.log(resp.data.email)
+                if (!resp.data.email) {
+                    resp.data.email = "Not defined"
+                }
+                fs.appendFile(`README.md`, `
+# Questions
+![logo](${resp.data.avatar_url})
+- ${resp.data.name}
+- Email : ${resp.data.email}`
+                    , (error) => {
+                        if (error) {
+                            console.log(error);
+                        }
+                        console.log("Your readme has been created");
+                    })
+            })
+            .catch(error => {
+                console.log(error);
+            });
     });
 
 
