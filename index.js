@@ -36,7 +36,7 @@ function searchRepos(answers, input) {
 inquirer.prompt([
     {
         type: "input",
-        message: "Can you had your Github username?",
+        message: "Can you add your Github username?",
         name: "username"
     },
     {
@@ -152,7 +152,7 @@ const asyncInq = async () => {
             {
                 type: 'autocomplete',
                 name: 'repositories',
-                message: 'Select a repository',
+                message: 'Type the name of your repository / Select a repository',
                 source: searchRepos,
             }
         ]).then((response) => {
