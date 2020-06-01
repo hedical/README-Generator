@@ -14,7 +14,7 @@ The objective of this tool is to quickly provide a Readme for any repository.
 To use this tool, start by cloning the repository on your computer.
 Then make sure to be on the targeted folder and make sure to run npm install to get all the modules needed. You can now type "node index.js" in your terminal. You will be prompt with some questions to quickly create your README.
 
-![gif](./assets/usage.gif)
+![gif](./assets/use.gif)
 # Licence
 No licence
 # Credits
